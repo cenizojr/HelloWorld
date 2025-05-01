@@ -18,12 +18,13 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Test
+      - name: Run tests with coverage and export results
+        run: npx jest --coverage --json --outputFile=jest.results.json
+
+      - name: Publish test summary
         uses: mattallty/jest-github-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          test-command: "npx jest --coverage --json --outputFile=jest.results.json"
 
       - uses: actions/upload-artifact@v4
         if: success() || failure()
