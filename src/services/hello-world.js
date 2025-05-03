@@ -10,8 +10,8 @@ class HelloWordService {
    * greet name
    * @returns a string that starts with Hello
    */
-  greet (nameToHello) {
-    return "Hello " + nameToHello + "!";
+  greet(nameToHello) {
+    return 'Hello ' + nameToHello + '!';
   }
 }
 
