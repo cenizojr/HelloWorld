@@ -22,7 +22,7 @@ jobs:
         ssh ubuntu@${{ secrets.SSH_HOST }} "if [ ! -d 'HelloWorld' ]; then \
             git clone https://github.com/cenizojr/HelloWorld.git; \ 
           else \
-            cd HelloWorld && git stash && git fetch --all && git reset --hard origin/master && git pull origin master; \
+            cd HelloWorld && git stash && git fetch --all && git reset --hard origin/main && git pull origin main; \
           fi"
         ssh ubuntu@${{ secrets.SSH_HOST }} "if pgrep node; then forever stopall; fi"
         ssh ubuntu@${{ secrets.SSH_HOST }} "cd HelloWorld && npm install"
