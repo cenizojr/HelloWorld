@@ -8,7 +8,7 @@ on:
 env:
   CONTAINER_REGISTRY: gcr.io
   GOOGLE_CLOUD_PROJECT: cnsa2025-jme418
-  IMAGE_NAME: HelloWorld
+  IMAGE_NAME: helloworld
 
 jobs:
   deploy:
@@ -53,10 +53,10 @@ jobs:
 
     - name: Deploy
       run: |
-        ssh ubuntu@${{ secrets.SSH_HOST }} "docker stop HelloWorld || true"
-        ssh ubuntu@${{ secrets.SSH_HOST }} "docker rm -fv HelloWorld || true"
+        ssh ubuntu@${{ secrets.SSH_HOST }} "docker stop helloworld || true"
+        ssh ubuntu@${{ secrets.SSH_HOST }} "docker rm -fv helloworld || true"
         ssh ubuntu@${{ secrets.SSH_HOST }} "docker pull ${{ env.CONTAINER_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.IMAGE_NAME }}:latest"
-        ssh ubuntu@${{ secrets.SSH_HOST }} "docker run -d -p 8080:3000 --name HelloWorld ${{ env.CONTAINER_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.IMAGE_NAME }}:latest"
+        ssh ubuntu@${{ secrets.SSH_HOST }} "docker run -d -p 8080:3000 --name helloworld ${{ env.CONTAINER_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.IMAGE_NAME }}:latest"
 
     - name: Remove unused Docker image
       run: docker rmi ${{ env.CONTAINER_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.IMAGE_NAME }}:latest || true
