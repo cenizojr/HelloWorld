@@ -1,4 +1,4 @@
-const HelloWordService = require("./hello-world");
+const HelloWordService = require('./hello-world');
 
 describe('HelloWordService Test', () => {
   const helloWordService = new HelloWordService();
