@@ -19,7 +19,7 @@ jobs:
         run: npm install
 
       - name: Test (PR)
-        if: github.event_name == 'pull-request'
+        if: github.event_name == 'pull_request'
         uses: mattallty/jest-github-action@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
