@@ -1,0 +1,62 @@
+name: Deploy with Docker to GCR
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+env:
+  CONTAINER_REGISTRY: gcr.io
+  GOOGLE_CLOUD_PROJECT: cnsa2025-jme418
+  IMAGE_NAME: HelloWorld
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 'lts/*'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Test
+      run: npm run test-jenkins
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+
+    - name: Configure Docker to use GCR
+      run: gcloud auth configure-docker ${{ env.CONTAINER_REGISTRY }} --quiet
+
+    - name: Build image
+      run: docker build -t ${{ env.CONTAINER_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.IMAGE_NAME }}:latest .
+
+    - name: Push image
+      run: docker push ${{ env.CONTAINER_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.IMAGE_NAME }}:latest
+
+    - name: Install SSH Key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.SSH_PRIVATE_KEY }} 
+        known_hosts: 'un-valor-para-que-no-de-error'
+    
+    - name: Adding Known Hosts
+      run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+    - name: Deploy
+      run: |
+        ssh ubuntu@${{ secrets.SSH_HOST }} "docker stop HelloWorld || true"
+        ssh ubuntu@${{ secrets.SSH_HOST }} "docker rm -fv HelloWorld || true"
+        ssh ubuntu@${{ secrets.SSH_HOST }} "docker pull ${{ env.CONTAINER_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.IMAGE_NAME }}:latest"
+        ssh ubuntu@${{ secrets.SSH_HOST }} "docker run -d -p 8080:3000 --name HelloWorld ${{ env.CONTAINER_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.IMAGE_NAME }}:latest"
+
+    - name: Remove unused Docker image
+      run: docker rmi ${{ env.CONTAINER_REGISTRY }}/${{ env.GOOGLE_CLOUD_PROJECT }}/${{ env.IMAGE_NAME }}:latest || true
