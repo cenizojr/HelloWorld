@@ -2,7 +2,7 @@ class HelloWordService {
     /**
      * @description Create an instance of HelloWordService
      */
-    constructor () {
+    constructor() {
       
     }
   
@@ -12,11 +12,11 @@ class HelloWordService {
      * greet name
      * @returns a string that starts with Hello
      */
-    greet ( nameToHello ) {
+    greet (nameToHello) {
 
-        return "Hello " + nameToHello+"!";
+        return "Hello " + nameToHello + "!";
       
     }
-  }
+}
   
-  module.exports = HelloWordService;
+module.exports = HelloWordService;
